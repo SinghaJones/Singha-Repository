@@ -1,2 +1,1 @@
-# Singha-Repository
-# Singha-Repository
+Dasmoto Art Website Project from Code Academy. 
