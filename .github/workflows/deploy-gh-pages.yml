@@ -1,4 +1,4 @@
-# Deploy static site (files at repo root) to GitHub Pages (gh-pages branch)
+# Deploy static site to GitHub Pages using the official Pages actions
 name: Deploy static site to GitHub Pages
 
 on:
@@ -6,16 +6,21 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read         # needed to read repository contents
+  pages: write           # needed to deploy to GitHub Pages
+  id-token: write        # required by deploy-pages action (OIDC)
+
 jobs:
   deploy:
-    name: Build and deploy
     runs-on: ubuntu-latest
+    environment: github-pages
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # If you have a build step (npm run build) uncomment and adjust these steps:
+      # Optional: uncomment and adapt if you have a build step that outputs to ./dist
       # - name: Setup Node.js
       #   uses: actions/setup-node@v4
       #   with:
@@ -24,14 +29,12 @@ jobs:
       #   run: npm ci
       # - name: Build
       #   run: npm run build
-      #   # If your build outputs to ./dist, change publish_dir below to ./dist
+      #   # If you use a build, change 'path' below to ./dist or ./build
 
-      - name: Deploy to gh-pages
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./          # publish site root; change to ./dist or ./docs if needed
-          publish_branch: gh-pages
-          commit_message: 'ci(pages): deploy site from main via Actions'
-          user_name: 'github-actions[bot]'
-          user_email: 'github-actions[bot]@users.noreply.github.com'
+          path: ./   # publish from repo root (index.html, style.css, script.js, images/)
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v1
