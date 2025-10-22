@@ -1,0 +1,96 @@
+/* General page styles */
+body {
+  font-family: Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+  color: #333;
+}
+
+/* Main title */
+h1 {
+  background-image: url('https://content.codecademy.com/courses/freelance-1/unit-2/pattern.jpeg');
+  background-size: cover;
+  background-position: center;
+  color: khaki;
+  font-size: 100px;
+  font-weight: bold;
+  text-align: center;
+  margin: 0;
+  padding: 20px 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+/* Section titles (Brushes, Frames, Paint) */
+h4 {
+  font-size: 32px;
+  font-weight: bold;
+  color: white;
+  padding: 10px;
+  margin: 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Section backgrounds */
+#brushes h4 {
+  background-color: mediumspringgreen;
+}
+
+#frames h4 {
+  background-color: lightcoral;
+}
+
+#paint h4 {
+  background-color: skyblue;
+}
+
+/* Product name */
+h5 {
+  font-size: 20px;
+  margin: 10px 0;
+  color: #555;
+}
+
+/* Description text */
+p {
+  font-size: 18px;
+  margin: 5px 0 25px;
+  max-width: 600px;
+}
+
+/* Highlighted prices */
+span {
+  color: #007bff;
+  font-weight: bold;
+  background-color: rgba(0, 123, 255, 0.1);
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+/* Image styling */
+img {
+  width: 300px;
+  height: auto;
+  display: block;
+  margin-top: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark Mode */
+.dark-mode {
+  background-color: #121212;
+  color: #f5f5f5;
+}
+
+.dark-mode h1 {
+  background-image: none;
+  background-color: #333;
+  color: khaki;
+}
+
+.dark-mode button {
+  background-color: #333;
+  color: white;
+  border: 1px solid #555;
+}
