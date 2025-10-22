@@ -1,47 +1,64 @@
-# Deploy static site to GitHub Pages with a debug step to inspect the checked-out files
-name: Deploy static site to GitHub Pages
+# Deploy static site to gh-pages branch by creating a temporary publish tree and pushing it.
+# This avoids using actions/upload-artifact (deprecated v3) or other actions that depend on it.
+name: Deploy static site to gh-pages (simple push)
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write    # needed to push the gh-pages branch
+  pages: write       # optional but useful for Pages API operations
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: github-pages
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Debug — show repository root files
+      - name: Prepare publish directory
         run: |
-          echo "Working directory:"
-          pwd
-          echo "List top-level files:"
-          ls -la
-          echo "Recursive tree (limited depth):"
-          # show file tree to 3 levels so we can see index.html or dist/docs if present
-          find. -maxdepth 3 -type f -printf '%P\n' | sed -n '1,200p'
-          echo "Show first lines of index.html if present:"
-          if [ -f ./index.html ]; then
-            echo "---- index.html ----"
-            head -n 40 ./index.html || true
-            echo "--------------------"
-          else
-            echo "index.html not found at repository root"
+          set -e
+          echo "Cleaning/creating publish directory..."
+          rm -rf publish || true
+          mkdir publish
+
+          # Copy site files into publish directory. Adjust/copy any other files you need.
+          # If you use a build step (npm run build) change this to copy from ./dist or ./build.
+          cp -R index.html publish/ || true
+          cp -R style.css publish/ || true
+          cp -R script.js publish/ || true
+          if [ -d images ]; then
+            cp -R images publish/
           fi
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          path: ./    # publish from repository root (index.html, style.css, script.js, images/)
+          echo "Contents of publish:"
+          ls -la publish || true
 
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v1
+      - name: Commit and push to gh-pages
+        env:
+          REPO: ${{ github.repository }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          cd publish
+
+          # Configure git
+          git init
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add -A
+          git commit -m "Deploy site from main at $GITHUB_SHA" || echo "nothing to commit"
+
+          # Force-push to gh-pages branch
+          git branch -M gh-pages
+          git remote add origin "https://x-access-token:${TOKEN}@github.com/${REPO}.git"
+          git push --force origin gh-pages
+
+      - name: Done
+        run: echo "Deployed to gh-pages branch"
