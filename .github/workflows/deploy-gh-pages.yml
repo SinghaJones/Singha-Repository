@@ -7,9 +7,9 @@ on:
       - main
 
 permissions:
-  contents: read         # needed to read repository contents
-  pages: write           # needed to deploy to GitHub Pages
-  id-token: write        # required by deploy-pages action (OIDC)
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   deploy:
@@ -20,21 +20,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Optional: uncomment and adapt if you have a build step that outputs to ./dist
-      # - name: Setup Node.js
-      #   uses: actions/setup-node@v4
-      #   with:
-      #     node-version: '18'
-      # - name: Install dependencies
-      #   run: npm ci
-      # - name: Build
-      #   run: npm run build
-      #   # If you use a build, change 'path' below to ./dist or ./build
-
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: ./   # publish from repo root (index.html, style.css, script.js, images/)
+          path: ./    # publish from repository root (index.html, style.css, script.js, images/)
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v1
