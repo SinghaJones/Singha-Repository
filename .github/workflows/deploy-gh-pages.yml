@@ -1,4 +1,4 @@
-# Deploy static site to GitHub Pages using the official Pages actions
+# Deploy static site to GitHub Pages with a debug step to inspect the checked-out files
 name: Deploy static site to GitHub Pages
 
 on:
@@ -19,6 +19,24 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Debug — show repository root files
+        run: |
+          echo "Working directory:"
+          pwd
+          echo "List top-level files:"
+          ls -la
+          echo "Recursive tree (limited depth):"
+          # show file tree to 3 levels so we can see index.html or dist/docs if present
+          find. -maxdepth 3 -type f -printf '%P\n' | sed -n '1,200p'
+          echo "Show first lines of index.html if present:"
+          if [ -f ./index.html ]; then
+            echo "---- index.html ----"
+            head -n 40 ./index.html || true
+            echo "--------------------"
+          else
+            echo "index.html not found at repository root"
+          fi
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v1
